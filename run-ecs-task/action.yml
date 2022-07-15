@@ -13,9 +13,6 @@ inputs:
   task-definition:
     description: "ECS task definition ARN"
     required: false
-  command:
-    description: "Task command"
-    required: true
   show-raw-output:
     description: "Display task logs"
     default: false

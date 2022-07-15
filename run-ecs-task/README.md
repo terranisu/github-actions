@@ -7,8 +7,6 @@ Run a one-off task on Amazon ECS.
   with:
     cluster: mycluster
     service: myapp
-    # This command is passed to a shell prompt.
-    command: bundle exec rake db:migrate
 ```
 
 Outputs:

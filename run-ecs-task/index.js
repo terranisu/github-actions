@@ -8,9 +8,8 @@ async function run() {
     const cluster = core.getInput("cluster", { required: true });
     const serviceName = core.getInput("service", { required: true });
     const definedContainerName = core.getInput("container", { required: false });
-    const command = core.getInput("command", { required: true });
     const givenTaskDefinition = core.getInput("task-definition", { required: false });
-    const showRawOutput = core.getInput("show-raw-output", { required: false });
+    const showRawOutput = core.getBooleanInput("show-raw-output", { required: false });
 
     const ecs = new AWS.ECS();
 
@@ -51,14 +50,7 @@ async function run() {
         cluster,
         taskDefinition: taskDefinition.taskDefinitionArn,
         launchType: "FARGATE",
-        overrides: {
-          containerOverrides: [
-            {
-              name: containerName,
-              command: ["sh", "-c", command],
-            },
-          ],
-        },
+        startedBy: "github-actions",
         networkConfiguration: service.deployments[0].networkConfiguration,
       })
       .promise();
@@ -78,7 +70,7 @@ async function run() {
     await waitTaskToComplete(ecs, cluster, taskID)
     console.log(`Task completed`);
 
-    if (showRawOutput === "true") {
+    if (showRawOutput) {
       const logConfig = taskDefinition.containerDefinitions[0].logConfiguration
       const logs = await readTaskLogs(logConfig, containerName, taskID)
 
